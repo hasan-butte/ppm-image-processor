@@ -1,74 +1,89 @@
 #include "PPMImage.h"
+#include <filesystem> 
+
+namespace fs = std::filesystem; 
+std::vector<std::string> fileNames(const std::string& dirPath);
 
 int main() {
 
     const std::string INPUT_DIR = "../tests/input/";
     const std::string OUTPUT_DIR = "../tests/output_cpp/";
+    std::vector<std::string> imgNames = fileNames(INPUT_DIR);
 
-    // first test case t1
+    bool keepGoing = true;
+    while (keepGoing)
     {
-        PPMImage img;
-        img.read(INPUT_DIR + "t1_simple.ppm");
-
-        if(img.isValid())
+        std::cout << "Please select an image from the following inputs (1, 2, ...):\n";
+        for(std::size_t i = 0; i < imgNames.size(); i++)
+            {
+                std::cout << i + 1 << ". " << imgNames.at(i) << std::endl;
+            }
+        int selectedFile;
+        if (!(std::cin >> selectedFile) || selectedFile < 1 || selectedFile > static_cast<int>(imgNames.size()))
         {
-            // grayscale
-            PPMImage gray = img;
-            gray.grayscale();
-            gray.write(OUTPUT_DIR + "t1_simple_gray.ppm");
-
-            // invert
-            PPMImage inv = img;
-            inv.invert();
-            inv.write(OUTPUT_DIR + "t1_simple_invert.ppm");
-
-            // horizontal flip
-            PPMImage flip = img;
-            flip.hflip();
-            flip.write(OUTPUT_DIR + "t1_simple_hflip.ppm");
+            std::cerr << "Error: Invalid image selection.\n";
+            return -1;
         }
 
-    }
+        std::string imgName = imgNames.at(selectedFile - 1);
+        PPMImage initImg;
+        initImg.read(INPUT_DIR + imgName + ".ppm");
 
-    // second test case t2
-    {
-        PPMImage img;
-        img.read(INPUT_DIR + "t2_realistic.ppm");
+        if(!initImg.isValid())
+            return -1;
 
-        if(img.isValid()) 
+        std::cout << "What do you want to do with the image (pick a number)?\n1. Remove Color \n2. Invert Color\n3. Flip Horizontally" << std::endl;
+
+        int methodNum;
+        if (!(std::cin >> methodNum))
         {
-            // grayscale
-            PPMImage gray = img;
-            gray.grayscale();
-            gray.write(OUTPUT_DIR + "t2_realistic_gray.ppm");
-
-            // invert
-            PPMImage inv = img;
-            inv.invert();
-            inv.write(OUTPUT_DIR + "t2_realistic_invert.ppm");
-
-            // horizontal flip
-            PPMImage flip = img;
-            flip.hflip();
-            flip.write(OUTPUT_DIR + "t2_realistic_hflip.ppm");
-        }
-    }
-
-    // third test case t3
-    {
-        PPMImage img;
-        img.read(INPUT_DIR + "t3_lowmax.ppm");
-
-        if(img.isValid()) 
-        {
-              // invert only
-            PPMImage inv = img;
-            inv.invert();
-            inv.write(OUTPUT_DIR + "t3_lowmax_invert.ppm");
+            std::cerr << "Error: Invalid method selection.\n";
+            return -1;
         }
 
+        PPMImage prodImg = initImg;
+        std::string newImgName;
+        switch(methodNum)
+        {
+            case 1:
+                prodImg.grayscale();
+                newImgName = imgName + "_grayed.ppm";
+                break;
+            case 2:
+                prodImg.invert();
+                newImgName = imgName + "_inverted.ppm";
+                break;
+            case 3:
+                prodImg.hflip();
+                newImgName = imgName + "_h_flipped.ppm";
+                break;
+            default:
+                std::cout << "Invalid method selected";
+                return -1;
+        }
+
+        prodImg.write(OUTPUT_DIR + newImgName);
+        std::cout << "Output written to " << OUTPUT_DIR + newImgName << std::endl;
+
+        std::cout << "Process another image? (y/n): ";
+        char again;
+        std::cin >> again;
+        keepGoing = (again == 'y' || again == 'Y');
     }
 
-    std::cout << "All test outputs written to ../tests/output_cpp/" << std::endl;
+    std::cout << "Done." << std::endl;
     return 0;
 }
+
+std::vector<std::string> fileNames(const std::string& dirPath)
+{
+    std::vector<std::string> files; 
+    for (const auto& entry : fs::directory_iterator(dirPath))
+        {
+            if(entry.is_regular_file() && entry.path().extension() == ".ppm")
+                files.push_back(entry.path().filename().stem().string());
+        }
+    std::sort(files.begin(), files.end());
+    return files; 
+}
+
