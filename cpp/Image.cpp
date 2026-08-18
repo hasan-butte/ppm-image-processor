@@ -17,6 +17,11 @@ int Image::getHeight() const
     return height; 
 }
 
+bool Image::isValid() const 
+{
+    return (width > 0 && height > 0); 
+}
+
 void Image::reset(const std::string& issue)
 {
     std::cerr << issue; 

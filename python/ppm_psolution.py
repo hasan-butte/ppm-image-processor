@@ -1,3 +1,4 @@
+import sys
 def readImgPPM(fileName):
 
     # parse header information  
@@ -104,45 +105,58 @@ def hflip(image):
     
 def main():
     INPUT_DIR = "../tests/input/"
-    OUTPUT_DIR = "../tests/output_ppm/"
+    OUTPUT_DIR = "../tests/output_python/"
 
-    # T1: t1_simple.ppm
-    img1 = readImage(INPUT_DIR + "t1_simple.ppm")
+    try: 
+        # T1: t1_simple.ppm
+        img1 = readImage(INPUT_DIR + "t1_simple.ppm")
 
-    # grayscale
-    img1_gray = grayscale(img1)
-    writeImage(OUTPUT_DIR + "t1_simple_gray.ppm", img1_gray)
+        # grayscale
+        img1_gray = grayscale(img1)
+        writeImage(OUTPUT_DIR + "t1_simple_gray.ppm", img1_gray)
 
-    # invert
-    img1_invert = invert(img1)
-    writeImage(OUTPUT_DIR + "t1_simple_invert.ppm", img1_invert)
+        # invert
+        img1_invert = invert(img1)
+        writeImage(OUTPUT_DIR + "t1_simple_invert.ppm", img1_invert)
 
-    # horizontal flip
-    img1_hflip = hflip(img1)
-    writeImage(OUTPUT_DIR + "t1_simple_hflip.ppm", img1_hflip)
+        # horizontal flip
+        img1_hflip = hflip(img1)
+        writeImage(OUTPUT_DIR + "t1_simple_hflip.ppm", img1_hflip)
 
-    # T2: t2_realistic.ppm
-    img2 = readImage(INPUT_DIR + "t2_realistic.ppm")
+    except ValueError as e: 
+        print(f"Error: {e}", file=sys.stderr)
 
-    # grayscale
-    img2_gray = grayscale(img2)
-    writeImage(OUTPUT_DIR + "t2_realistic_gray.ppm", img2_gray)
+    try: 
 
-    # invert
-    img2_invert = invert(img2)
-    writeImage(OUTPUT_DIR + "t2_realistic_invert.ppm", img2_invert)
+        # T2: t2_realistic.ppm
+        img2 = readImage(INPUT_DIR + "t2_realistic.ppm")
 
-    # horizontal flip
-    img2_hflip = hflip(img2)
-    writeImage(OUTPUT_DIR + "t2_realistic_hflip.ppm", img2_hflip)
+        # grayscale
+        img2_gray = grayscale(img2)
+        writeImage(OUTPUT_DIR + "t2_realistic_gray.ppm", img2_gray)
 
-    # T3: t3_lowmax.ppm 
+        # invert
+        img2_invert = invert(img2)
+        writeImage(OUTPUT_DIR + "t2_realistic_invert.ppm", img2_invert)
 
-    # invert
-    img3 = readImage(INPUT_DIR + "t3_lowmax.ppm")
+        # horizontal flip
+        img2_hflip = hflip(img2)
+        writeImage(OUTPUT_DIR + "t2_realistic_hflip.ppm", img2_hflip)
 
-    img3_invert = invert(img3)
-    writeImage(OUTPUT_DIR + "t3_lowmax_invert.ppm", img3_invert)
+    except ValueError as e: 
+        print(f"Error: {e}", file=sys.stderr)
+
+    try:
+
+        # T3: t3_lowmax.ppm 
+        # invert
+        img3 = readImage(INPUT_DIR + "t3_lowmax.ppm")
+
+        img3_invert = invert(img3)
+        writeImage(OUTPUT_DIR + "t3_lowmax_invert.ppm", img3_invert)
+
+    except ValueError as e: 
+        print(f"Error: {e}", file=sys.stderr)
 
     print("All Python outputs written to ../tests/output_python/")
 

@@ -15,6 +15,7 @@ public:
     Image(int initW, int initH);
     int getWidth() const; 
     int getHeight() const; 
+    bool isValid() const;
     virtual void reset(const std::string& issue);
     virtual ~Image() = default;
     virtual void read(const std::string& fileName) = 0;
@@ -24,6 +25,7 @@ public:
     void grayscale(); 
     void invert();
     void hflip();
+
 
 protected:
     int width, height;
