@@ -1,4 +1,5 @@
 import sys
+from pathlib import Path
 def readImgPPM(fileName):
 
     # parse header information  
@@ -102,63 +103,73 @@ def hflip(image):
             flippedArray[first], flippedArray[mirror] = flippedArray[mirror], flippedArray[first]
 
     return (width, height, flippedArray)
+
+METHODS = {
+    1: (grayscale, "_grayed"),
+    2: (invert, "_inverted"),
+    3: (hflip, "_hflipped"),
+}
+
+def listFileNames(dirPath):
+    files = [p.stem for p in Path(dirPath).iterdir() if p.is_file() and p.suffix == ".ppm"]
+    files.sort()
+    return files
+
     
 def main():
     INPUT_DIR = "../tests/input/"
     OUTPUT_DIR = "../tests/output_python/"
 
-    try: 
-        # T1: t1_simple.ppm
-        img1 = readImage(INPUT_DIR + "t1_simple.ppm")
+    fileNames = listFileNames(INPUT_DIR)
 
-        # grayscale
-        img1_gray = grayscale(img1)
-        writeImage(OUTPUT_DIR + "t1_simple_gray.ppm", img1_gray)
+    keepGoing = True
+    while keepGoing:
+        print("Please select an image from the following inputs (1, 2, ...):")
+        for i, name in enumerate(fileNames):
+            print(f"{i + 1}. {name}")
 
-        # invert
-        img1_invert = invert(img1)
-        writeImage(OUTPUT_DIR + "t1_simple_invert.ppm", img1_invert)
+        try:
+            selectedFile = int(input())
+        except ValueError:
+            print("Error: Invalid image selection.", file=sys.stderr)
+            sys.exit(1)
 
-        # horizontal flip
-        img1_hflip = hflip(img1)
-        writeImage(OUTPUT_DIR + "t1_simple_hflip.ppm", img1_hflip)
+        if selectedFile < 1 or selectedFile > len(fileNames):
+            print("Error: Invalid image selection.", file=sys.stderr)
+            sys.exit(1)
 
-    except ValueError as e: 
-        print(f"Error: {e}", file=sys.stderr)
+        imgName = fileNames[selectedFile - 1]
 
-    try: 
+        try:
+            initImg = readImage(INPUT_DIR + imgName + ".ppm")
+        except ValueError as e:
+            print(f"Error: {e}", file=sys.stderr)
+            sys.exit(1)
+        print("What do you want to do with the image (pick a number)?\n1. Remove Color \n2. Invert Color\n3. Flip Horizontally")
 
-        # T2: t2_realistic.ppm
-        img2 = readImage(INPUT_DIR + "t2_realistic.ppm")
+        try:
+            methodNum = int(input())
+        except ValueError:
+            print("Error: Invalid method selection.", file=sys.stderr)
+            sys.exit(1)
 
-        # grayscale
-        img2_gray = grayscale(img2)
-        writeImage(OUTPUT_DIR + "t2_realistic_gray.ppm", img2_gray)
+        if methodNum < 1 or methodNum > 3:
+            print("Error: Invalid method selection.", file=sys.stderr)
+            sys.exit(1)
 
-        # invert
-        img2_invert = invert(img2)
-        writeImage(OUTPUT_DIR + "t2_realistic_invert.ppm", img2_invert)
+        execMethod, suffix = METHODS[methodNum]
+        prodImg = execMethod(initImg)
+        newImgName = imgName + suffix + ".ppm"
+        writeImage(OUTPUT_DIR + newImgName, prodImg)
+        print(f"Output written to {OUTPUT_DIR + newImgName}")
 
-        # horizontal flip
-        img2_hflip = hflip(img2)
-        writeImage(OUTPUT_DIR + "t2_realistic_hflip.ppm", img2_hflip)
+        again = input("Process another image? (y/n): ").strip()
+        if not again:
+            print("Error: Invalid response.", file=sys.stderr)
+            sys.exit(1)
+        keepGoing = again[0] in ("y", "Y")
 
-    except ValueError as e: 
-        print(f"Error: {e}", file=sys.stderr)
-
-    try:
-
-        # T3: t3_lowmax.ppm 
-        # invert
-        img3 = readImage(INPUT_DIR + "t3_lowmax.ppm")
-
-        img3_invert = invert(img3)
-        writeImage(OUTPUT_DIR + "t3_lowmax_invert.ppm", img3_invert)
-
-    except ValueError as e: 
-        print(f"Error: {e}", file=sys.stderr)
-
-    print("All Python outputs written to ../tests/output_python/")
+    print("Done.")
 
 if __name__ == "__main__": 
     main() 

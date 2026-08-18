@@ -1,5 +1,6 @@
 #include "PPMImage.h"
-#include <filesystem> 
+#include <filesystem>
+#include <limits>
 
 namespace fs = std::filesystem; 
 std::vector<std::string> fileNames(const std::string& dirPath);
@@ -24,6 +25,7 @@ int main() {
             std::cerr << "Error: Invalid image selection.\n";
             return -1;
         }
+        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 
         std::string imgName = imgNames.at(selectedFile - 1);
         PPMImage initImg;
@@ -40,6 +42,7 @@ int main() {
             std::cerr << "Error: Invalid method selection.\n";
             return -1;
         }
+        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 
         PPMImage prodImg = initImg;
         std::string newImgName;
@@ -67,7 +70,12 @@ int main() {
 
         std::cout << "Process another image? (y/n): ";
         char again;
-        std::cin >> again;
+        if (!(std::cin >> again))
+        {
+            std::cerr << "Error: Invalid response.\n";
+            return -1;
+        }
+        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
         keepGoing = (again == 'y' || again == 'Y');
     }
 
