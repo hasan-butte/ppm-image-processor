@@ -3,8 +3,6 @@
 A PPM (P3) image reader/writer/filter tool implemented in two paradigms:
 C++ using an object-oriented approach, and Python using a procedural
 approach. Built to compare how each paradigm handles the same problem.
-Originally developed as a project for a university Programming Languages
-course.
 
 ## Features
 
