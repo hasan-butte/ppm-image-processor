@@ -1,3 +1,4 @@
+import os
 import subprocess
 import sys
 from pathlib import Path
@@ -20,7 +21,7 @@ def cpp_binary_is_stale():
 
 
 def compile_cpp():
-    print("Compiling C++ solution...")
+    print("Compiling C++ solution...", flush=True)
     cmd = ["g++", "-std=c++17", "-O2", "-o", str(CPP_BINARY)] + [str(s) for s in CPP_SOURCES]
     try:
         subprocess.run(cmd, check=True)
@@ -39,11 +40,25 @@ def run_python():
     subprocess.run([sys.executable, str(PYTHON_SCRIPT)], cwd=PYTHON_DIR)
 
 
+def read_stdin_line():
+    # Reads byte-by-byte instead of using input(), which over-reads and
+    # buffers ahead when stdin is piped rather than a live terminal. That
+    # would swallow input meant for the subprocess launched right after.
+    chars = []
+    while True:
+        b = os.read(0, 1)
+        if not b or b == b"\n":
+            break
+        chars.append(b.decode())
+    return "".join(chars)
+
+
 def main():
     print("Which solution would you like to run?")
     print("1) C++")
     print("2) Python")
-    choice = input("> ").strip()
+    print("> ", end="", flush=True)
+    choice = read_stdin_line().strip()
 
     if choice == "1":
         run_cpp()

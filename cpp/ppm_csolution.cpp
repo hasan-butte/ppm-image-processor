@@ -58,7 +58,7 @@ int main() {
                 break;
             case 3:
                 prodImg.hflip();
-                newImgName = imgName + "_h_flipped.ppm";
+                newImgName = imgName + "_hflipped.ppm";
                 break;
             default:
                 std::cout << "Invalid method selected";
