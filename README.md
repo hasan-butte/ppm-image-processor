@@ -77,8 +77,8 @@ you'll then get an interactive prompt:
 ```
 Please select an image from the following inputs (1, 2, ...):
 1. color_blur
-2. pixel_rainbow
-3. swan
+2. pelican
+3. pixel_rainbow
 ```
 
 followed by a choice of filter (grayscale, invert, or horizontal flip).
@@ -99,7 +99,7 @@ different parts of the pixel data:
 
 - `color_blur.ppm`
 - `pixel_rainbow.ppm`
-- `swan.ppm`
+- `pelican.ppm`
 
 You can test with your own images too. Drop any P3-format `.ppm` file into
 `tests/input/` and it will show up in the selection list the next time you
